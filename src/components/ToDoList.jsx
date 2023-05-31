@@ -38,6 +38,7 @@ function ToDoList() {
                 <input
                   onChange={() => handle(todo)}
                   className="toggle"
+                  checked={todo.completed}
                   type="checkbox"
                 />
                 <label>{todo.title}</label>
@@ -53,6 +54,7 @@ function ToDoList() {
                 <input
                   className="toggle"
                   type="checkbox"
+                  checked={todo.completed}
                   onChange={() => handle(todo)}
                 />
                 <label>{todo.title}</label>
