@@ -26,8 +26,8 @@ function Form() {
         placeholder="What needs to be done?"
         autoFocus
         onChange={(e) => (newToDo.title = e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") dispatch(addNewToDo);
+        onKeyUp={(e) => {
+          if (e.key === "Enter") addNewToDo();
         }}
       />
     </form>

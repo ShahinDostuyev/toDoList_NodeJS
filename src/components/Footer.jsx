@@ -1,10 +1,14 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCompleted } from "../slices/ToDoSlice";
 
 function Footer() {
+  const todos = useSelector((state) => state.todo.todos)
+  const dispatch = useDispatch()
   return (
     <footer className="footer">
       <span className="todo-count">
-        <strong>2</strong>
+        <strong>{todos.length}</strong>
         items left
       </span>
 
@@ -22,7 +26,7 @@ function Footer() {
         </li>
       </ul>
 
-      <button className="clear-completed">Clear completed</button>
+      <button onClick={() => dispatch(clearCompleted())} className="clear-completed">Clear completed</button>
     </footer>
   );
 }
