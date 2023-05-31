@@ -1,19 +1,37 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Footer from './Footer'
+
 import "../index.css";
 import { handleCompleted, removeToDo } from "../slices/ToDoSlice";
 
 function ToDoList() {
   const todos = useSelector((state) => state.todo.todos);
+
+  const [filter, setfilter] = useState("all")
+  const handleFilter = (selectedFilter) => {
+    setfilter(selectedFilter);
+  };
+
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "active") {
+      return !todo.completed;
+    } else if (filter === "completed") {
+      return todo.completed;
+    } else {
+      return true;
+    }
+  });
   console.log(todos);
   const dispatch = useDispatch();
   const handle = (todo) => {
     dispatch(handleCompleted(todo));
   };
   return (
+    <>
     <ul className="todo-list">
-      {todos &&
-        todos.map((todo) =>
+      {filteredTodos &&
+        filteredTodos.map((todo) =>
           todo.completed ? (
             <li key={todo.id} className="completed">
               <div className="view">
@@ -47,6 +65,10 @@ function ToDoList() {
           )
         )}
     </ul>
+    <Footer handleFilter={handleFilter} />
+    </>
+    
+    
   );
 }
 

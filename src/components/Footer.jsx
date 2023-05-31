@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCompleted } from "../slices/ToDoSlice";
 
-function Footer() {
+function Footer({handleFilter}) {
   const todos = useSelector((state) => state.todo.todos)
   const dispatch = useDispatch()
   return (
@@ -14,15 +14,15 @@ function Footer() {
 
       <ul className="filters">
         <li>
-          <a href="#/" className="selected">
+          <a href="#/" className="selected" onClick={() => handleFilter("all")}>
             All
           </a>
         </li>
         <li>
-          <a href="#/">Active</a>
+          <a href="#/" onClick={() => handleFilter("active")}>Active</a>
         </li>
         <li>
-          <a href="#/">Completed</a>
+          <a href="#/" onClick={() => handleFilter("completed")}>Completed</a>
         </li>
       </ul>
 

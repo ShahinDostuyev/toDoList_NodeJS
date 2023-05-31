@@ -1,6 +1,5 @@
 import React from 'react'
 import ToDoList from './ToDoList'
-import Footer from './Footer'
 
 function Content() {
   return (
@@ -10,7 +9,6 @@ function Content() {
 			Mark all as complete
 		</label>
     <ToDoList/>
-    <Footer/>
 		
 	</section>
   )
