@@ -1,53 +1,106 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { TODO_API } from "../constants/api";
+import axios from "axios";
 const initialState = {
-  todos: [
-    {
-      id: 1,
-      title: "Learn Javascript",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Learn React",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Have a life",
-      completed: false,
-    },
-  ],
+  data: null,
+  error: null,
+  loading: false,
 };
 console.log("rendered");
 
+export const getTodos = createAsyncThunk(
+  "todos/get",
+  async (data,thunkAPI) => {
+    try {
+      let res = await axios.get(TODO_API);
+      return res.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const addTodo = createAsyncThunk(
+  "todos/addTodo",
+  async (newTodo, thunkAPI) => {
+    try {
+      const response = await axios.post(TODO_API, newTodo);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteTodo = createAsyncThunk(
+  "todos/deleteTodo",
+  async (id, thunkAPI) => {
+    try {
+      await axios.delete(`${TODO_API}/${id}`);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const todoSlice = createSlice({
   name: "todo",
-  initialState,
+  initialState: initialState,
   reducers: {
-    addToDO: (state, action) => {
-      state.todos = [...state.todos, action.payload];
-    },
-    removeToDo: (state, action) => {
-      let removedTodos = state.todos.filter(
-        (todo) => todo.id !== action.payload.id
-      );
-      state.todos = removedTodos;
-    },
     handleCompleted: (state, action) => {
-      const getIndex = state.todos.findIndex((todo) => {
+      const getIndex = state.data.findIndex((todo) => {
         return todo.id === action.payload.id;
       });
-      state.todos[getIndex].completed = !state.todos[getIndex].completed;
+      state.data[getIndex].completed = !state.data[getIndex].completed;
     },
-    clearCompleted: (state)=>{
-      const clearedTodos = state.todos.filter(todo => todo.completed !==true)
-      state.todos = clearedTodos;
-
-    }
+    clearCompleted: (state) => {
+      const clearedTodos = state.data.filter(
+        (todo) => todo.completed !== true
+      );
+      state.data = clearedTodos;
+    },
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(getTodos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getTodos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(getTodos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addTodo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addTodo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data.push(action.payload);
+      })
+      .addCase(addTodo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteTodo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteTodo.fulfilled, (state, action) => {
+        state.loading = false;
+        const deletedTodoId = action.payload;
+        state.data = state.data.filter((todo) => todo.id !== deletedTodoId);
+      })
+      .addCase(deleteTodo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { addToDO, removeToDo, handleCompleted,clearCompleted } = todoSlice.actions;
+export const { removeToDo, handleCompleted, clearCompleted } =
+  todoSlice.actions;
 
 export default todoSlice.reducer;

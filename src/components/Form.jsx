@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addToDO } from "../slices/ToDoSlice";
+import { addToDO, addTodo } from "../slices/ToDoSlice";
 
 function Form() {
   const [newToDo, setNewToDo] = useState({
@@ -11,7 +11,7 @@ function Form() {
   const dispatch = useDispatch();
 
   const addNewToDo = () => {
-    dispatch(addToDO(newToDo));
+    dispatch(addTodo(newToDo));
     setNewToDo({
       id: Math.floor(Math.random() * 1000),
       title: "",
